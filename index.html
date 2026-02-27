@@ -136,7 +136,7 @@ th {
 <form onsubmit="awgToMM(); return false;" onreset="awgResult.innerHTML=''">
 
 <input type="number" id="awgInput" placeholder="AWG">
-<button type="submit" class="calc">AWG → mm²</button>
+<button type="button" class="calc" onclick="inchToCM()">Inch → cm</button>
 
 <input type="number" id="mmInput" placeholder="mm²">
 <button type="button" class="calc" onclick="mmToAWG()">mm² → AWG</button>
@@ -171,45 +171,49 @@ th {
 <h3>Längen & Gewicht</h3>
 <form onreset="unitResult.innerHTML=''">
 <input type="number" id="inch" placeholder="Inch">
-<button class="calc" onclick="inchToCM()">Inch → cm</button>
+<button type="button" class="calc" onclick="inchToCM()">Inch → cm</button>
 
 <input type="number" id="cm" placeholder="cm">
-<button class="calc" onclick="cmToInch()">cm → Inch</button>
+<button type="button" class="calc" onclick="cmToInch()">cm → Inch</button>
 
 <input type="number" id="feet" placeholder="Feet">
-<button class="calc" onclick="feetToM()">Feet → Meter</button>
+<button type="button" class="calc" onclick="feetToM()">Feet → Meter</button>
 
 <input type="number" id="meter" placeholder="Meter">
-<button class="calc" onclick="mToFeet()">Meter → Feet</button>
+<button type="button" class="calc" onclick="mToFeet()">Meter → Feet</button>
 
 <input type="number" id="kg" placeholder="kg">
-<button class="calc" onclick="kgToLb()">kg → lbs</button>
+<button type="button" class="calc" onclick="kgToLb()">kg → lbs</button>
 
 <input type="number" id="lb" placeholder="lbs">
-<button class="calc" onclick="lbToKg()">lbs → kg</button>
+<button type="button" class="calc" onclick="lbToKg()">lbs → kg</button>
 
 <div id="unitResult" class="result"></div>
-<button type="reset" class="calc" style="background:#999;">Reset</button>
+<button type="button" class="calc" onclick="inchToCM()">Inch → cm</button>
 </form>
 </div>
 </div>
 
 <script>
+
+// ---------- Navigation ----------
 function showSection(id){
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
 
-function round2(x){ return Number(x).toFixed(2); }
+function round2(x){
+    return Number(x).toFixed(2);
+}
 
-// Holz
+// ---------- HOLZ ----------
 function calcHolz(){
     let dicke = parseFloat(document.getElementById("d").value);
     let breite = parseFloat(document.getElementById("b").value);
     let laenge = parseFloat(document.getElementById("l").value);
     let preisProBf = parseFloat(document.getElementById("preis").value);
 
-    if(isNaN(dicke)||isNaN(breite)||isNaN(laenge)||isNaN(preisProBf)){
+    if(isNaN(dicke) || isNaN(breite) || isNaN(laenge) || isNaN(preisProBf)){
         document.getElementById("holzResult").innerHTML = "Bitte alle Werte eingeben.";
         return;
     }
@@ -218,40 +222,104 @@ function calcHolz(){
     let total = bf * preisProBf;
 
     document.getElementById("holzResult").innerHTML =
-    "Menge: " + round2(bf) + " bf<br>" +
-    "Gesamtpreis: ₱ " + round2(total);
+        "Menge: " + round2(bf) + " bf<br>" +
+        "Gesamtpreis: ₱ " + round2(total);
 }
 
-// AWG
-function awgToMM(){
-    let awg = parseFloat(awgInput.value);
-    if(isNaN(awg)) return;
-    let mm = 0.012668 * Math.pow(92, (36-awg)/19.5);
-    awgResult.innerHTML = round2(mm)+" mm²";
-}
 
-function mmToAWG(){
-    let mm = parseFloat(mmInput.value);
-    if(isNaN(mm)) return;
-    let awg = 36 - (19.5*Math.log(mm/0.012668)/Math.log(92));
-    awgResult.innerHTML = round2(awg)+" AWG";
-}
-
-// Units
-function inchToCM(){ unitResult.innerHTML = round2(inch.value*2.54)+" cm"; }
-function cmToInch(){ unitResult.innerHTML = round2(cm.value/2.54)+" inch"; }
-function feetToM(){ unitResult.innerHTML = round2(feet.value*0.3048)+" m"; }
-function mToFeet(){ unitResult.innerHTML = round2(meter.value/0.3048)+" ft"; }
-function kgToLb(){ unitResult.innerHTML = round2(kg.value*2.20462)+" lbs"; }
-function lbToKg(){ unitResult.innerHTML = round2(lb.value/2.20462)+" kg"; }
-document.querySelectorAll("#holz input").forEach(input => {
+// Enter-Logik im Holzmodul (Springen + Berechnen im letzten Feld)
+document.querySelectorAll("#holz input").forEach((input, index, inputs) => {
     input.addEventListener("keydown", function(e){
         if(e.key === "Enter"){
             e.preventDefault();
-            calcHolz();
+
+            if(index < inputs.length - 1){
+                inputs[index + 1].focus();
+            } else {
+                calcHolz();
+            }
         }
     });
 });
+
+
+// ---------- AWG ----------
+function awgToMM(){
+    let awg = parseFloat(document.getElementById("awgInput").value);
+    if(isNaN(awg)) return;
+
+    let mm = 0.012668 * Math.pow(92, (36 - awg) / 19.5);
+
+    document.getElementById("awgResult").innerHTML =
+        round2(mm) + " mm²";
+}
+
+function mmToAWG(){
+    let mm = parseFloat(document.getElementById("mmInput").value);
+    if(isNaN(mm)) return;
+
+    let awg = 36 - (19.5 * Math.log(mm / 0.012668) / Math.log(92));
+
+    document.getElementById("awgResult").innerHTML =
+        round2(awg) + " AWG";
+}
+
+
+// ---------- UMRECHNUNG ----------
+function inchToCM(){
+    let wert = parseFloat(document.getElementById("inch").value);
+    if(isNaN(wert)) return;
+
+    let result = wert * 2.54;
+    document.getElementById("unitResult").innerHTML =
+        round2(result) + " cm";
+}
+
+function cmToInch(){
+    let wert = parseFloat(document.getElementById("cm").value);
+    if(isNaN(wert)) return;
+
+    let result = wert / 2.54;
+    document.getElementById("unitResult").innerHTML =
+        round2(result) + " inch";
+}
+
+function feetToM(){
+    let wert = parseFloat(document.getElementById("feet").value);
+    if(isNaN(wert)) return;
+
+    let result = wert * 0.3048;
+    document.getElementById("unitResult").innerHTML =
+        round2(result) + " m";
+}
+
+function mToFeet(){
+    let wert = parseFloat(document.getElementById("meter").value);
+    if(isNaN(wert)) return;
+
+    let result = wert / 0.3048;
+    document.getElementById("unitResult").innerHTML =
+        round2(result) + " ft";
+}
+
+function kgToLb(){
+    let wert = parseFloat(document.getElementById("kg").value);
+    if(isNaN(wert)) return;
+
+    let result = wert * 2.20462;
+    document.getElementById("unitResult").innerHTML =
+        round2(result) + " lbs";
+}
+
+function lbToKg(){
+    let wert = parseFloat(document.getElementById("lb").value);
+    if(isNaN(wert)) return;
+
+    let result = wert / 2.20462;
+    document.getElementById("unitResult").innerHTML =
+        round2(result) + " kg";
+}
+
 </script>
 
 </body>
