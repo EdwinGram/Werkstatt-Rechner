@@ -271,8 +271,7 @@ function inchToCM(){
     if(isNaN(wert)) return;
 
     let result = wert * 2.54;
-    document.getElementById("unitResult").innerHTML =
-        round2(result) + " cm";
+   document.getElementById("cm").value = round2(result);
 }
 
 function cmToInch(){
@@ -280,8 +279,7 @@ function cmToInch(){
     if(isNaN(wert)) return;
 
     let result = wert / 2.54;
-    document.getElementById("unitResult").innerHTML =
-        round2(result) + " inch";
+    document.getElementById("inch").value = round2(result);
 }
 
 function feetToM(){
@@ -289,8 +287,7 @@ function feetToM(){
     if(isNaN(wert)) return;
 
     let result = wert * 0.3048;
-    document.getElementById("unitResult").innerHTML =
-        round2(result) + " m";
+    document.getElementById("meter").value = round2(result);
 }
 
 function mToFeet(){
@@ -298,8 +295,7 @@ function mToFeet(){
     if(isNaN(wert)) return;
 
     let result = wert / 0.3048;
-    document.getElementById("unitResult").innerHTML =
-        round2(result) + " ft";
+    document.getElementById("feet").value = round2(result);
 }
 
 function kgToLb(){
@@ -307,8 +303,7 @@ function kgToLb(){
     if(isNaN(wert)) return;
 
     let result = wert * 2.20462;
-    document.getElementById("unitResult").innerHTML =
-        round2(result) + " lbs";
+    document.getElementById("lb").value = round2(result);
 }
 
 function lbToKg(){
@@ -316,8 +311,7 @@ function lbToKg(){
     if(isNaN(wert)) return;
 
     let result = wert / 2.20462;
-    document.getElementById("unitResult").innerHTML =
-        round2(result) + " kg";
+    document.getElementById("kg").value = round2(result);
 }
 
 </script>
